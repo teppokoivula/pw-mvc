@@ -64,7 +64,7 @@ In the directory structure displayed above 'lib' contains files required by this
 In case you're interested in working with the MVC pattern – or simply looking for a solution that offers separation of concerns for your template files – and this particular project doesn't seem to fulfill your needs, you might want to check out the following options:
 
 * [A Rails-inspired [something]VC boilerplate for new ProcessWire projects](https://github.com/fixate/pw-mvc-boilerplate)
-* [SPEX, an asset and template management module for ProcessWire](https://github.com/jdart/Spex)
+* [Spex, an asset and template management module for ProcessWire](https://github.com/jdart/Spex)
 * [Template Data Providers module](https://github.com/marcostoll/processwire-template-data-providers)
 
 ## License
