@@ -9,7 +9,7 @@
  * 
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @version 1.0.0
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
+ * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
 
 require_once "{$config->paths->templates}/lib/ViewPlaceholders.php";
