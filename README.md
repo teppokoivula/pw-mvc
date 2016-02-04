@@ -1,4 +1,4 @@
-# Simple template-based model-view-controller output pattern for ProcessWire CMS/CMF
+# Simple template-based model-view-controller output solution for ProcessWire CMS/CMF
 
 The files in this repository represent the contents of the /site/templates/ directory. As such, this is not really a site profile, and neither does it provide meaningful markup for your site out of the box. Consider this a starting point for building your own sites and applications with ProcessWire using a simplified model-view-controller type architecture.
 
@@ -43,7 +43,7 @@ While the components and terminology you see here are similar to those you would
 
 To get started, you can simply copy the contents of this repository into your /site/templates/ directory and set the value of the Alternate Template Filename setting of any given template to 'index'. This will redirect any requests for pages using that template to our Front Controller component (/site/templates/index.php).
 
-It should be noted that since this pattern is based on the Alternate Template Filename setting, you don't have to use it for all of your templates – unless you want to.
+It should be noted that since this solution is based on the Alternate Template Filename setting, you don't have to use it for all of your templates – unless you want to.
 
 ## Components
 
@@ -57,11 +57,11 @@ If a template specific **Controller** is found, it is included within the Front 
 
 * View Scripts are specific to a given template, and essentially represent the per-page markup. Each template may have more than one View Script, each of which may represent either different sections of the page (masthead.php, aside.php, content.php) or completely different methods of rendering page content (json.php, rss.php).
 
-In the directory structure displayed above 'lib' contains files required by this output pattern itself,  'static' contains all static assets of your site (images, stylesheets, JavaScript files, etc.) and 'errors' is the directory where ProcessWire expects templates used for error messages to be placed.
+In the directory structure displayed above 'lib' contains files required by this output solution itself, 'static' contains all static assets of your site (images, stylesheets, JavaScript files, etc.) and 'errors' is the directory where ProcessWire expects templates used for error messages to be placed.
 
-## Other MVC-ish output patterns for ProcessWire
+## Other MVC-ish output solutions for ProcessWire
 
-In case you're interested in working with the MVC pattern – or siply looking for a solution that offers separation of concerns for your template files – and this particular project doesn't seem to fulfill your needs, you might want to check out the following options:
+In case you're interested in working with the MVC pattern – or simply looking for a solution that offers separation of concerns for your template files – and this particular project doesn't seem to fulfill your needs, you might want to check out the following options:
 
 * [A Rails-inspired [something]VC boilerplate for new ProcessWire projects](https://github.com/fixate/pw-mvc-boilerplate)
 * [SPEX, an asset and template management module for ProcessWire](https://github.com/jdart/Spex)
