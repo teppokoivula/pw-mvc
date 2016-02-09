@@ -6,8 +6,8 @@
  * This file is for general purpose functions required by the front controller
  * and any other output-related features.
  *
- * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @version 1.0.1
+ * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
 

@@ -3,8 +3,8 @@
 /**
  * Container for View Placeholders
  * 
- * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @version 1.0.0
+ * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
 class ViewPlaceholders {

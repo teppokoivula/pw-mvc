@@ -6,8 +6,8 @@
  * This file is intended for various hooks that make it easier to work with
  * template level stuff: shortcuts for getting and setting properties, etc.
  *
- * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @version 1.0.0
+ * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
 

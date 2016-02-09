@@ -3,12 +3,16 @@
 /**
  * Front Controller
  * 
- * Front controller is an entry point for requests and handler for most
- * common template level tasks. Selecting the Controller and setting up
- * the View are some of it's main responsibilities.
+ * Front controller is a centralized entry point for all requests and handler
+ * for most common template level tasks. Selecting the Controller and setting
+ * up the View are some of it's main responsibilities.
  * 
- * @author Teppo Koivula <teppo.koivula@gmail.com>
+ * This file should not be modified. Customizations affecting the entire site
+ * should go to index.custom.php instead. If said file doesn't exist yet, you
+ * can create it: it's a regular PHP file included near the end of this file.
+ * 
  * @version 1.0.3
+ * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
 
