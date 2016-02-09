@@ -9,4 +9,4 @@
  * 
  */
 
-$layout->site_name = "Example";
+$view->site_name = "Example";
