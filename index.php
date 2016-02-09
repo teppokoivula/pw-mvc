@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.7
+ * @version 1.0.8
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -43,6 +43,10 @@ $view->script = $page->view() === null ? null : $page->view();
 $view->partials = getFilesRecursive("{$views}partials/*", $ext);
 $view->placeholders = new ViewPlaceholders($page, $scripts, $ext);
 
+// include file containing custom front controller logic; the intention here
+// is to keep the Front Controller itself intact and easy to keep up to date
+if (is_file("index.custom.php")) include "index.custom.php";
+
 // initialise the Controller; since this template-specific component isn't
 // required, we'll first have to check if it exists at all
 if (is_file("{$controllers}{$page->template}{$ext}")) {
@@ -51,25 +55,20 @@ if (is_file("{$controllers}{$page->template}{$ext}")) {
 
 // choose a view script; default value is 'default', but view() method of the
 // $page object or GET param 'view' can also be used to set the view script
-if ($view->script && is_file("{$scripts}{$view->script}{$ext}")) {
+$view->script = basename($view->script ?: ($page->view() ?: ($input->get->view ?: 'default')));
+if ($view->script != "default" && !is_file("{$scripts}{$view->script}{$ext}")) {
+    $view->script = "default";
+}
+if ($view->script != "default" || is_file("{$scripts}{$view->script}{$ext}")) {
     $view->filename = "{$scripts}{$view->script}{$ext}";
-} else {
-    $filename = basename($input->get->view ?: ($page->view() ?: 'default'));
-    if (is_file("{$scripts}{$filename}{$ext}")) {
-        $view->filename = "{$scripts}{$filename}{$ext}";
-        if ($filename != "default") {
-            // not using the default view script, disable page cache
-            $session->PageRenderNoCachePage = $page->id;
-        } else if ($session->PageRenderNoCachePage == $page->id) {
-            // make sure that page cache isn't skipped unnecessarily
-            $session->remove("PageRenderNoCachePage");
-        }
+    if ($view->script != "default") {
+        // not using the default view script, disable page cache
+        $session->PageRenderNoCachePage = $page->id;
+    } else if ($session->PageRenderNoCachePage == $page->id) {
+        // make sure that page cache isn't skipped unnecessarily
+        $session->remove("PageRenderNoCachePage");
     }
 }
-
-// include file containing custom front controller logic; the intention here
-// is to keep the Front Controller itself intact and easy to keep up to date
-if (is_file("index.custom.php")) include "index.custom.php";
 
 // if view script and/or layout is defined, render the page
 if ($view->filename || $view->layout) {
