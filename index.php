@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.5
+ * @version 1.0.6
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -38,8 +38,8 @@ if (strpos(get_include_path(), $include_paths[0]) === false) {
 
 // initialise the View
 $view = new TemplateFile;
-$view->set('layout', $page->layout() === null ? 'default' : $page->layout());
-$view->set('view', $page->view() === null ? null : $page->view());
+$view->layout = $page->layout() === null ? 'default' : $page->layout();
+$view->script = $page->view() === null ? null : $page->view();
 $view->partials = getFilesRecursive("{$views}partials/*", $ext);
 $view->placeholders = new ViewPlaceholders($page, $scripts, $ext);
 
@@ -51,8 +51,8 @@ if (is_file("{$controllers}{$page->template}{$ext}")) {
 
 // choose a view script; default value is 'index', but view() method of the
 // $page object or GET param 'view' can also be used to set the view script
-if ($view->view && is_file("{$scripts}{$view->view}{$ext}")) {
-    $view->filename = "{$scripts}{$view->view}{$ext}";
+if ($view->script && is_file("{$scripts}{$view->script}{$ext}")) {
+    $view->filename = "{$scripts}{$view->script}{$ext}";
 } else {
     $filename = basename($input->get->view ?: ($page->view() ?: 'index'));
     if (is_file("{$scripts}{$filename}{$ext}")) {
