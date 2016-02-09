@@ -15,7 +15,7 @@
 <html>
     <head>
         <title><?= $page->title ?> - <?= $site_name ?></title>
-        <link rel="stylesheet" type="text/css" href="<?= $config->urls->templates ?>static/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="<?= $config->urls->static ?>css/style.css" />
         <?= $placeholders->head ?>
     </head>
     <body>

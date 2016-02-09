@@ -9,4 +9,4 @@
  * 
  */
 
-$placeholders->head = "<link rel='stylesheet' type='text/css' href='{$config->urls->templates}static/css/home.css' />";
+$placeholders->head = "<link rel='stylesheet' type='text/css' href='{$config->urls->static}css/home.css' />";

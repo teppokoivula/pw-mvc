@@ -8,7 +8,7 @@
  * the View are some of it's main responsibilities.
  * 
  * @author Teppo Koivula <teppo.koivula@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
 
@@ -21,6 +21,7 @@ $ext = ".{$config->templateExtension}";
 $views = "{$config->paths->templates}views/";
 $scripts = "{$views}scripts/{$page->template}/";
 $controllers = "{$config->paths->templates}controllers/";
+$config->urls->static = "{$config->urls->templates}static/";
 
 // fetch a list of available partials
 $partials = getFilesRecursive("{$views}partials/*", $ext);
