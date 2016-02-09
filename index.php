@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.4
+ * @version 1.0.5
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -36,18 +36,12 @@ if (strpos(get_include_path(), $include_paths[0]) === false) {
     set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, $include_paths));
 }
 
-// fetch a list of available partials
-$partials = getFilesRecursive("{$views}partials/*", $ext);
-
-// initialise placeholders
-$placeholders = new ViewPlaceholders($page, $scripts, $ext);
-
 // initialise the View
 $view = new TemplateFile;
 $view->set('layout', $page->layout() === null ? 'default' : $page->layout());
 $view->set('view', $page->view() === null ? null : $page->view());
-$view->partials = $partials;
-$view->placeholders = $placeholders;
+$view->partials = getFilesRecursive("{$views}partials/*", $ext);
+$view->placeholders = new ViewPlaceholders($page, $scripts, $ext);
 
 // initialise the Controller; since this template-specific component isn't
 // required, we'll first have to check if it exists at all
