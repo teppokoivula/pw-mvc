@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.3
+ * @version 1.0.4
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -41,11 +41,6 @@ $partials = getFilesRecursive("{$views}partials/*", $ext);
 
 // initialise placeholders
 $placeholders = new ViewPlaceholders($page, $scripts, $ext);
-
-// initialise the Layout
-$layout = new TemplateFile;
-$layout->partials = $partials;
-$layout->placeholders = $placeholders;
 
 // initialise the View
 $view = new TemplateFile;
@@ -88,12 +83,11 @@ if ($view->filename || $view->layout) {
     if ($filename = basename($view->layout)) {
         // layouts make it possible to define a common base structure for
         // multiple otherwise separate templates and view scripts (DRY)
-        $layout->filename = "{$views}layouts/{$filename}{$ext}";
-        $layout->partials = $view->partials;
-        if (!$layout->placeholders->content) {
-            $layout->placeholders->content = $content;
+        $view->filename = "{$views}layouts/{$filename}{$ext}";
+        if (!$view->placeholders->content) {
+            $view->placeholders->content = $content;
         }
-        $content = $layout->render();
+        $content = $view->render();
     }
     echo $content;
 }
