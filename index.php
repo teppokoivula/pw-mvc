@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.6
+ * @version 1.0.7
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -49,15 +49,15 @@ if (is_file("{$controllers}{$page->template}{$ext}")) {
     include "{$controllers}{$page->template}{$ext}";
 }
 
-// choose a view script; default value is 'index', but view() method of the
+// choose a view script; default value is 'default', but view() method of the
 // $page object or GET param 'view' can also be used to set the view script
 if ($view->script && is_file("{$scripts}{$view->script}{$ext}")) {
     $view->filename = "{$scripts}{$view->script}{$ext}";
 } else {
-    $filename = basename($input->get->view ?: ($page->view() ?: 'index'));
+    $filename = basename($input->get->view ?: ($page->view() ?: 'default'));
     if (is_file("{$scripts}{$filename}{$ext}")) {
         $view->filename = "{$scripts}{$filename}{$ext}";
-        if ($filename != "index") {
+        if ($filename != "default") {
             // not using the default view script, disable page cache
             $session->PageRenderNoCachePage = $page->id;
         } else if ($session->PageRenderNoCachePage == $page->id) {
