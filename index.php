@@ -8,7 +8,7 @@
  * the View are some of it's main responsibilities.
  * 
  * @author Teppo Koivula <teppo.koivula@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
 
@@ -23,7 +23,7 @@ $scripts = "{$views}scripts/{$page->template}/";
 $controllers = "{$config->paths->templates}controllers/";
 
 // fetch a list of available partials
-$partials = getPartials("{$views}partials/*", $ext);
+$partials = getFilesRecursive("{$views}partials/*", $ext);
 
 // initialise placeholders
 $placeholders = new ViewPlaceholders($page, $scripts, $ext);

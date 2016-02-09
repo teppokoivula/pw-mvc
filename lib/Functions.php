@@ -7,26 +7,26 @@
  * and any other output-related features.
  *
  * @author Teppo Koivula <teppo.koivula@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
 
 /**
- * Fetch a list of available partials
+ * Fetch a list of files recursively
  *
- * @param string $path Partials directory
- * @param string $ext Template file extension
+ * @param string $path Base directory
+ * @param string $ext File extension
  * @return stdClass
  */
-function getPartials($path, $ext) {
-    $partials = array();
-    foreach (glob($path) as $partial) {
-        $name = basename($partial);
-        if (is_dir($partial)) {
-            $partials[$name] = getPartials("{$partial}/*", $ext);
+function getFilesRecursive($path, $ext) {
+    $files = array();
+    foreach (glob($path) as $file) {
+        $name = basename($file);
+        if (is_dir($file)) {
+            $files[$name] = getFilesRecursive("{$file}/*", $ext);
         } else if (strrpos($name, $ext) === strlen($name)-strlen($ext)) {
-            $partials[substr($name, 0, strrpos($name, "."))] = $partial;
+            $files[substr($name, 0, strrpos($name, "."))] = $file;
         }
     }
-    return (object) $partials;
+    return (object) $files;
 }
