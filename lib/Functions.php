@@ -6,7 +6,7 @@
  * This file is for general purpose functions required by the front controller
  * and any other output-related features.
  *
- * @version 1.0.2
+ * @version 1.0.3
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
@@ -21,8 +21,8 @@
 function getFilesRecursive($path, $ext) {
     $files = array();
     foreach (glob($path) as $file) {
-        if (strpos($name, ".") === 0) continue;
         $name = basename($file);
+        if (strpos($name, ".") === 0) continue;
         if (is_dir($file)) {
             $files[$name] = getFilesRecursive("{$file}/*", $ext);
         } else if (strrpos($name, $ext) === strlen($name)-strlen($ext)) {
