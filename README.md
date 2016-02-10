@@ -33,9 +33,9 @@ While the components and terminology you see here are similar to those you would
     │       └── top.php
     └── scripts
         ├── basic-page
-        │   └── index.php
+        │   └── default.php
         └── home
-            ├── index.php
+            ├── default.php
             └── json.php
 ```
 
