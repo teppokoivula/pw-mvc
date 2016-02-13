@@ -7,9 +7,9 @@
  * be triggered by specifying view programmatically or by requesting the page
  * with GET param 'view':
  * 
- * Option A: (via $view object) $view->view = 'json';
+ * Option A: (via $view object) $view->script = 'json';
  * Option B: http://www.example.com/?view=json
- * Option C: (via $page object) $page->view = 'json';
+ * Option C: (via $page object) $page->view('json');
  *
  */
 
