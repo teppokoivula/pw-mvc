@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.9
+ * @version 1.0.10
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -46,7 +46,9 @@ $view->placeholders = new ViewPlaceholders($page, $scripts, $ext);
 
 // include file containing custom front controller logic; the intention here
 // is to keep the Front Controller itself intact and easy to keep up to date
-if (is_file("index.custom.php")) include "index.custom.php";
+if (is_file("{$config->paths->templates}index.custom.php")) {
+    include "{$config->paths->templates}index.custom.php";
+}
 
 // initialise the Controller; since this template-specific component isn't
 // required, we'll first have to check if it exists at all
