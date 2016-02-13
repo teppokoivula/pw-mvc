@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.8
+ * @version 1.0.9
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -38,6 +38,7 @@ if (strpos(get_include_path(), $include_paths[0]) === false) {
 
 // initialise the View
 $view = new TemplateFile;
+$this->wire('view', $view, true);
 $view->layout = $page->layout() === null ? 'default' : $page->layout();
 $view->script = $page->view() === null ? null : $page->view();
 $view->partials = getFilesRecursive("{$views}partials/*", $ext);
