@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.12
+ * @version 1.1.0
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -22,6 +22,13 @@ $config_defaults = array(
     'include_paths' => array(
         // '/path/to/shared/libraries/',
     ),
+    'redirect_fields' => array(
+        // 'redirect_to_url',
+        // 'redirect_to_page' => array(
+        //     'property' => 'url',
+        //     'permanent' => true,
+        // ),
+    ),
 );
 $config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->mvc) : $config_defaults;
 
@@ -30,6 +37,25 @@ $config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->m
 // perform things that don't fit the normal program flow (like redirects)
 if (is_file("{$config->paths->templates}index.before.php")) {
     include "{$config->paths->templates}index.before.php";
+}
+
+// look for redirect fields from config settings; if present, check if the page
+// has a value in one of these and if a redirect should be triggered
+if (count($config->mvc['redirect_fields'])) {
+    foreach ($config->mvc['redirect_fields'] as $field => $options) {
+        if (is_int($field) && is_string($options)) $field = $options;
+        if ($page->$field) {
+            $url = $page->$field;
+            $permanent = false;
+            if (is_array($options)) {
+                if (isset($options['property'])) $url = $url->$options['property'];
+                if (isset($options['permanent'])) $permanent = (bool) $options['permanent'];
+            }
+            if (is_string($url) && $url != $page->url && $sanitizer->url($url)) {
+                $session->redirect($url, $permanent);
+            }
+        }
+    }
 }
 
 require_once "{$config->paths->templates}/lib/ViewPlaceholders.php";
