@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.11
+ * @version 1.0.12
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -24,6 +24,13 @@ $config_defaults = array(
     ),
 );
 $config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->mvc) : $config_defaults;
+
+// include a file containing custom front controller logic; the contents of
+// this file are executed before anything else, making this a good place to
+// perform things that don't fit the normal program flow (like redirects)
+if (is_file("{$config->paths->templates}index.before.php")) {
+    include "{$config->paths->templates}index.before.php";
+}
 
 require_once "{$config->paths->templates}/lib/ViewPlaceholders.php";
 require_once "{$config->paths->templates}/lib/Functions.php";
@@ -53,8 +60,9 @@ $view->script = $page->view() === null ? null : $page->view();
 $view->partials = getFilesRecursive("{$views}partials/*", $ext);
 $view->placeholders = new ViewPlaceholders($page, $scripts, $ext);
 
-// include file containing custom front controller logic; the intention here
-// is to keep the Front Controller itself intact and easy to keep up to date
+// include a file containing custom front controller logic; the contents of
+// this file are executed right before dispatching the template controller,
+// which means that this file already has access to the View component etc.
 if (is_file("{$config->paths->templates}index.custom.php")) {
     include "{$config->paths->templates}index.custom.php";
 }
@@ -83,16 +91,26 @@ if ($view->script != "default" || is_file("{$scripts}{$view->script}{$ext}")) {
 }
 
 // if view script and/or layout is defined, render the page
+$out = null;
 if ($view->filename || $view->layout) {
-    $content = $view->render();
+    $out = $view->render();
     if ($filename = basename($view->layout)) {
         // layouts make it possible to define a common base structure for
         // multiple otherwise separate templates and view scripts (DRY)
         $view->filename = "{$views}layouts/{$filename}{$ext}";
         if (!$view->placeholders->content) {
-            $view->placeholders->content = $content;
+            $view->placeholders->content = $out;
         }
-        $content = $view->render();
+        $out = $view->render();
     }
-    echo $content;
 }
+
+// include a file containing custom front controller logic; the contents of
+// this file are executed right before content is displayed, which makes it
+// possible to make final adjustments to (or based on) the output itself
+if (is_file("{$config->paths->templates}index.after.php")) {
+    include "{$config->paths->templates}index.after.php";
+}
+
+// final step: output rendered markup
+if (!is_null($out)) echo $out;
