@@ -11,10 +11,19 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.0.10
+ * @version 1.0.11
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
+
+// configuration settings; if you need to customize these, copy this array to
+// config.php as config setting 'mvc' ($config->mvc)
+$config_defaults = array(
+    'include_paths' => array(
+        // '/path/to/shared/libraries/',
+    ),
+);
+$config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->mvc) : $config_defaults;
 
 require_once "{$config->paths->templates}/lib/ViewPlaceholders.php";
 require_once "{$config->paths->templates}/lib/Functions.php";
@@ -29,7 +38,7 @@ $config->urls->static = "{$config->urls->templates}static/";
 
 // set PHP include path
 $include_paths = array($views);
-if (is_array($config->mvc) && is_array($config->mvc['include_paths'])) {
+if (count($config->mvc['include_paths'])) {
     $include_paths = array_merge($include_paths, $config->mvc['include_paths']);
 }
 if (strpos(get_include_path(), $include_paths[0]) === false) {
