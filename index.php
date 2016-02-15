@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.1.1
+ * @version 1.2.0
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -29,6 +29,14 @@ $config_defaults = array(
         //     'permanent' => true,
         // ),
     ),
+    'allow_get_view' => true,
+    // 'allow_get_view' => array(
+    //     'home' => array(
+    //         'json',
+    //         'rss',
+    //     ),
+    //     'json',
+    // ),
 );
 $config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->mvc) : $config_defaults;
 
@@ -101,7 +109,25 @@ if (is_file("{$controllers}{$page->template}{$ext}")) {
 
 // choose a view script; default value is 'default', but view() method of the
 // $page object or GET param 'view' can also be used to set the view script
-$view->script = basename($view->script ?: ($page->view() ?: ($input->get->view ?: 'default')));
+$get_view = null;
+if ($input->get->view && $allow_get_view = $config->mvc['allow_get_view']) {
+    if (is_array($allow_get_view)) {
+        // allowing *any* view script to be used via a GET param might not be
+        // appropriate; using a whitelist allows us to configure valid values
+        foreach ($allow_get_view as $template => $value) {
+            if (is_string($template) && is_array($value) && $page->template == $template) {
+                $get_view = in_array($input->get->view, $value) ? $input->get->view : null;
+                break;
+            } else if (is_int($template) && is_string($value) && $input->get->view == $value) {
+                $get_view = $input->get->view;
+                break;
+            }
+        }
+    } else if ($allow_get_view) {
+        $get_view = $input->get->view;
+    }
+}
+$view->script = basename($view->script ?: ($page->view() ?: ($get_view ?: 'default')));
 if ($view->script != "default" && !is_file("{$scripts}{$view->script}{$ext}")) {
     $view->script = "default";
 }
