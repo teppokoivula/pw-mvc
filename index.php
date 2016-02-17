@@ -11,7 +11,7 @@
  * should go to index.custom.php instead. If said file doesn't exist yet, you
  * can create it: it's a regular PHP file included near the end of this file.
  * 
- * @version 1.2.0
+ * @version 1.2.1
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -123,7 +123,7 @@ if ($input->get->view && $allow_get_view = $config->mvc['allow_get_view']) {
                 break;
             }
         }
-    } else if ($allow_get_view) {
+    } else {
         $get_view = $input->get->view;
     }
 }
