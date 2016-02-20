@@ -8,16 +8,21 @@
  * up the View are some of it's main responsibilities.
  * 
  * This file should not be modified. Customizations affecting the entire site
- * should go to index.custom.php instead. If said file doesn't exist yet, you
- * can create it: it's a regular PHP file included near the end of this file.
+ * should go to index.before.php, index.custom.php, or index.after.php instead.
+ * If these files don't exist, you can create them: they are regular PHP files
+ * included at specific times during the control flow of the front controller.
  * 
- * @version 1.2.1
+ * Note: the suggested naming for the front controller file is index.php, but
+ * you can technically speaking rename this file if something else suits your
+ * needs better. In this case the custom files should be adjusted accordingly.
+ * 
+ * @version 1.3.0
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
 
-// configuration settings; if you need to customize these, copy this array to
-// config.php as config setting 'mvc' ($config->mvc)
+// configuration settings; if you need to customize any of these, instead of
+// making changes here, copy this array to config.php as $config->mvc
 $config_defaults = array(
     'include_paths' => array(
         // '/path/to/shared/libraries/',
@@ -37,14 +42,31 @@ $config_defaults = array(
     //     ),
     //     'json',
     // ),
+    'paths' => array(
+        'lib' => "{$config->paths->templates}lib/",
+        'views' => "{$config->paths->templates}views/",
+        'scripts' => "{$config->paths->templates}views/scripts/",
+        'layouts' => "{$config->paths->templates}views/layouts/",
+        'partials' => "{$config->paths->templates}views/partials/",
+        'controllers' => "{$config->paths->templates}controllers/",
+    ),
+    'urls' => array(
+        'static' => "{$config->urls->templates}static/",
+    )
 );
+
+// combine default settings with custom ones and define shortcuts for later use
 $config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->mvc) : $config_defaults;
+$config->urls->static = $config->mvc['urls']['static'];
+$front_controller = basename(__FILE__, '.php');
+$paths = (object) $config->mvc['paths'];
+$ext = ".{$config->templateExtension}";
 
 // include a file containing custom front controller logic; the contents of
 // this file are executed before anything else, making this a good place to
 // perform things that don't fit the normal program flow (like redirects)
-if (is_file("{$config->paths->templates}index.before.php")) {
-    include "{$config->paths->templates}index.before.php";
+if (is_file("{$config->paths->templates}{$front_controller}.before.php")) {
+    include "{$config->paths->templates}{$front_controller}.before.php";
 }
 
 // look for redirect fields from config settings; if present, check if the page
@@ -66,19 +88,13 @@ if (count($config->mvc['redirect_fields'])) {
     }
 }
 
-require_once "{$config->paths->templates}/lib/ViewPlaceholders.php";
-require_once "{$config->paths->templates}/lib/Functions.php";
-require_once "{$config->paths->templates}/lib/Hooks.php";
-
-// initialise variables
-$ext = ".{$config->templateExtension}";
-$views = "{$config->paths->templates}views/";
-$scripts = "{$views}scripts/{$page->template}/";
-$controllers = "{$config->paths->templates}controllers/";
-$config->urls->static = "{$config->urls->templates}static/";
+// fetch required classes and files
+require_once "{$paths->lib}ViewPlaceholders.php";
+require_once "{$paths->lib}Functions.php";
+require_once "{$paths->lib}Hooks.php";
 
 // set PHP include path
-$include_paths = array($views);
+$include_paths = array($paths->views);
 if (count($config->mvc['include_paths'])) {
     $include_paths = array_merge($include_paths, $config->mvc['include_paths']);
 }
@@ -91,20 +107,20 @@ $view = new TemplateFile;
 $this->wire('view', $view);
 $view->layout = $page->layout() === null ? 'default' : $page->layout();
 $view->script = $page->view() === null ? null : $page->view();
-$view->partials = getFilesRecursive("{$views}partials/*", $ext);
-$view->placeholders = new ViewPlaceholders($page, $scripts, $ext);
+$view->partials = getFilesRecursive("{$paths->partials}*", $ext);
+$view->placeholders = new ViewPlaceholders($page, $paths->scripts, $ext);
 
 // include a file containing custom front controller logic; the contents of
 // this file are executed right before dispatching the template controller,
 // which means that this file already has access to the View component etc.
-if (is_file("{$config->paths->templates}index.custom.php")) {
-    include "{$config->paths->templates}index.custom.php";
+if (is_file("{$config->paths->templates}{$front_controller}.custom.php")) {
+    include "{$config->paths->templates}{$front_controller}.custom.php";
 }
 
 // initialise the Controller; since this template-specific component isn't
 // required, we'll first have to check if it exists at all
-if (is_file("{$controllers}{$page->template}{$ext}")) {
-    include "{$controllers}{$page->template}{$ext}";
+if (is_file("{$paths->controllers}{$page->template}{$ext}")) {
+    include "{$paths->controllers}{$page->template}{$ext}";
 }
 
 // choose a view script; default value is 'default', but view() method of the
@@ -128,11 +144,11 @@ if ($input->get->view && $allow_get_view = $config->mvc['allow_get_view']) {
     }
 }
 $view->script = basename($view->script ?: ($page->view() ?: ($get_view ?: 'default')));
-if ($view->script != "default" && !is_file("{$scripts}{$view->script}{$ext}")) {
+if ($view->script != "default" && !is_file("{$paths->scripts}{$view->script}{$ext}")) {
     $view->script = "default";
 }
-if ($view->script != "default" || is_file("{$scripts}{$view->script}{$ext}")) {
-    $view->filename = "{$scripts}{$view->script}{$ext}";
+if ($view->script != "default" || is_file("{$paths->scripts}{$view->script}{$ext}")) {
+    $view->filename = "{$paths->scripts}{$view->script}{$ext}";
     if ($view->script != "default") {
         // not using the default view script, disable page cache
         $session->PageRenderNoCachePage = $page->id;
@@ -149,7 +165,7 @@ if ($view->filename || $view->layout) {
     if ($filename = basename($view->layout)) {
         // layouts make it possible to define a common base structure for
         // multiple otherwise separate templates and view scripts (DRY)
-        $view->filename = "{$views}layouts/{$filename}{$ext}";
+        $view->filename = "{$paths->layouts}{$filename}{$ext}";
         if (!$view->placeholders->content) {
             $view->placeholders->content = $out;
         }
@@ -160,8 +176,8 @@ if ($view->filename || $view->layout) {
 // include a file containing custom front controller logic; the contents of
 // this file are executed right before content is displayed, which makes it
 // possible to make final adjustments to (or based on) the output itself
-if (is_file("{$config->paths->templates}index.after.php")) {
-    include "{$config->paths->templates}index.after.php";
+if (is_file("{$config->paths->templates}{$front_controller}.after.php")) {
+    include "{$config->paths->templates}{$front_controller}.after.php";
 }
 
 // final step: output rendered markup
