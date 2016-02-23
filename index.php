@@ -16,7 +16,7 @@
  * you can technically speaking rename this file if something else suits your
  * needs better. In this case the custom files should be adjusted accordingly.
  * 
- * @version 1.3.1
+ * @version 1.3.2
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -144,7 +144,7 @@ if ($input->get->view && $allow_get_view = $config->mvc['allow_get_view']) {
     }
 }
 $view->script = basename($view->script ?: ($page->view() ?: ($get_view ?: 'default')));
-if ($view->script != "default" && !is_file("{$paths->scripts}{$view->script}{$ext}")) {
+if ($view->script != "default" && !is_file("{$paths->scripts}{$page->template}/{$view->script}{$ext}")) {
     $view->script = "default";
 }
 if ($view->script != "default" || is_file("{$paths->scripts}{$page->template}/{$view->script}{$ext}")) {
