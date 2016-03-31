@@ -3,7 +3,7 @@
 /**
  * Container for View Placeholders
  * 
- * @version 1.0.0
+ * @version 1.0.1
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
@@ -64,7 +64,7 @@ class ViewPlaceholders {
     public function __get($key) {
         $return = isset($this->data[$key]) ? $this->data[$key] : null;
         if (is_null($return) && ($basekey = basename($key)) == $key) {
-            if (is_file($this->scripts . $basekey . $this->ext)) {
+            if (is_file($this->scripts . $this->page->template . "/" . $basekey . $this->ext)) {
                 $return = $this->page->layout('')->view($key)->render();
             }
         }
