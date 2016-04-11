@@ -16,7 +16,7 @@
  * you can technically speaking rename this file if something else suits your
  * needs better. In this case the custom files should be adjusted accordingly.
  * 
- * @version 1.3.2
+ * @version 1.3.3
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -67,6 +67,7 @@ $ext = ".{$config->templateExtension}";
 // perform things that don't fit the normal program flow (like redirects)
 if (is_file("{$config->paths->templates}{$front_controller}.before.php")) {
     include "{$config->paths->templates}{$front_controller}.before.php";
+    if ($this->halt) return $this->halt();
 }
 
 // look for redirect fields from config settings; if present, check if the page
@@ -115,12 +116,14 @@ $view->placeholders = new ViewPlaceholders($page, $paths->scripts, $ext);
 // which means that this file already has access to the View component etc.
 if (is_file("{$config->paths->templates}{$front_controller}.custom.php")) {
     include "{$config->paths->templates}{$front_controller}.custom.php";
+    if ($this->halt) return $this->halt();
 }
 
 // initialise the Controller; since this template-specific component isn't
 // required, we'll first have to check if it exists at all
 if (is_file("{$paths->controllers}{$page->template}{$ext}")) {
     include "{$paths->controllers}{$page->template}{$ext}";
+    if ($this->halt) return $this->halt();
 }
 
 // choose a view script; default value is 'default', but view() method of the
@@ -178,6 +181,7 @@ if ($view->filename || $view->layout) {
 // possible to make final adjustments to (or based on) the output itself
 if (is_file("{$config->paths->templates}{$front_controller}.after.php")) {
     include "{$config->paths->templates}{$front_controller}.after.php";
+    if ($this->halt) return $this->halt();
 }
 
 // final step: output rendered markup
