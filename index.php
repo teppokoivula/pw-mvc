@@ -16,7 +16,7 @@
  * you can technically speaking rename this file if something else suits your
  * needs better. In this case the custom files should be adjusted accordingly.
  * 
- * @version 1.3.3
+ * @version 1.3.4
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -152,7 +152,7 @@ if ($view->script != "default" && !is_file("{$paths->scripts}{$page->template}/{
 }
 if ($view->script != "default" || is_file("{$paths->scripts}{$page->template}/{$view->script}{$ext}")) {
     $view->filename = "{$paths->scripts}{$page->template}/{$view->script}{$ext}";
-    if ($view->script != "default") {
+    if ($view->script != "default" && !$view->allow_cache) {
         // not using the default view script, disable page cache
         $session->PageRenderNoCachePage = $page->id;
     } else if ($session->PageRenderNoCachePage == $page->id) {
