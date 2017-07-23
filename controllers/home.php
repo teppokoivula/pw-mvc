@@ -3,9 +3,9 @@
 /**
  * Controller file for the 'home' template
  * 
- * If any of your templates require template-level program logic, you can add
- * controller files for them. It's generally speaking a good idea to keep any
- * complex logic out of your views (separation of concerns).
+ * If a template requires code that is not strictly view related, you can add
+ * a controller file for it. Generally speaking it's a good idea to keep code
+ * out of your views (separation of concerns).
  * 
  */
 
