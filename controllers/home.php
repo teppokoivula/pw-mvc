@@ -9,4 +9,4 @@
  * 
  */
 
-$view->placeholders->head = "<link rel='stylesheet' type='text/css' href='{$config->urls->static}css/home.css' />";
+$view->placeholders->head = "<!-- welcome home -->";
