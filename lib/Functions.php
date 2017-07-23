@@ -8,7 +8,7 @@
  *
  * @version 1.0.3
  * @author Teppo Koivula <teppo.koivula@gmail.com>
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
+ * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
 
 /**
