@@ -16,7 +16,7 @@
  * you can technically speaking rename this file if something else suits your
  * needs better. In this case the custom files should be adjusted accordingly.
  * 
- * @version 1.3.4
+ * @version 1.4.0
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license Mozilla Public License v2.0 http://mozilla.org/MPL/2.0/
  */
@@ -43,15 +43,15 @@ $config_defaults = array(
     //     'json',
     // ),
     'paths' => array(
-        'lib' => "{$config->paths->templates}lib/",
-        'views' => "{$config->paths->templates}views/",
-        'scripts' => "{$config->paths->templates}views/scripts/",
-        'layouts' => "{$config->paths->templates}views/layouts/",
-        'partials' => "{$config->paths->templates}views/partials/",
-        'controllers' => "{$config->paths->templates}controllers/",
+        'lib' => $config->paths->templates . "lib/",
+        'views' => $config->paths->templates . "views/",
+        'scripts' => $config->paths->templates . "views/scripts/",
+        'layouts' => $config->paths->templates . "views/layouts/",
+        'partials' => $config->paths->templates . "views/partials/",
+        'controllers' => $config->paths->templates . "controllers/",
     ),
     'urls' => array(
-        'static' => "{$config->urls->templates}static/",
+        'static' => $config->urls->templates . "static/",
     )
 );
 
@@ -60,13 +60,13 @@ $config->mvc = is_array($config->mvc) ? array_merge($config_defaults, $config->m
 $config->urls->static = $config->mvc['urls']['static'];
 $front_controller = basename(__FILE__, '.php');
 $paths = (object) $config->mvc['paths'];
-$ext = ".{$config->templateExtension}";
+$ext = "." . $config->templateExtension;
 
 // include a file containing custom front controller logic; the contents of
 // this file are executed before anything else, making this a good place to
 // perform things that don't fit the normal program flow (like redirects)
-if (is_file("{$config->paths->templates}{$front_controller}.before.php")) {
-    include "{$config->paths->templates}{$front_controller}.before.php";
+if (is_file($config->paths->templates . $front_controller . ".before.php")) {
+    include $config->paths->templates . $front_controller . ".before.php";
     if ($this->halt) return $this->halt();
 }
 
@@ -90,9 +90,9 @@ if (count($config->mvc['redirect_fields'])) {
 }
 
 // fetch required classes and files
-require_once "{$paths->lib}ViewPlaceholders.php";
-require_once "{$paths->lib}Functions.php";
-require_once "{$paths->lib}Hooks.php";
+require_once $paths->lib . "ViewPlaceholders.php";
+require_once $paths->lib . "Functions.php";
+require_once $paths->lib . "Hooks.php";
 
 // set PHP include path
 $include_paths = array($paths->views);
@@ -107,22 +107,22 @@ if (strpos(get_include_path(), $include_paths[0]) === false) {
 $view = new TemplateFile;
 $this->wire('view', $view);
 $view->layout = $page->layout() === null ? 'default' : $page->layout();
-$view->script = $page->view() === null ? null : $page->view();
-$view->partials = getFilesRecursive("{$paths->partials}*", $ext);
+$view->script = $page->view();
+$view->partials = getFilesRecursive($paths->partials . "*", $ext);
 $view->placeholders = new ViewPlaceholders($page, $paths->scripts, $ext);
 
-// include a file containing custom front controller logic; the contents of
-// this file are executed right before dispatching the template controller,
-// which means that this file already has access to the View component etc.
-if (is_file("{$config->paths->templates}{$front_controller}.custom.php")) {
-    include "{$config->paths->templates}{$front_controller}.custom.php";
+// include a file containing custom front controller logic; since this file is
+// executed right before dispatching the template controller, within it you'll
+// have access to the View component
+if (is_file($config->paths->templates . $front_controller . ".custom.php")) {
+    include $config->paths->templates . $front_controller . ".custom.php";
     if ($this->halt) return $this->halt();
 }
 
 // initialise the Controller; since this template-specific component isn't
-// required, we'll first have to check if it exists at all
-if (is_file("{$paths->controllers}{$page->template}{$ext}")) {
-    include "{$paths->controllers}{$page->template}{$ext}";
+// required, we'll start by checking if it even exists
+if (is_file($paths->controllers . $page->template . $ext)) {
+    include $paths->controllers . $page->template . $ext;
     if ($this->halt) return $this->halt();
 }
 
@@ -147,17 +147,19 @@ if ($input->get->view && $allow_get_view = $config->mvc['allow_get_view']) {
     }
 }
 $view->script = basename($view->script ?: ($page->view() ?: ($get_view ?: 'default')));
-if ($view->script != "default" && !is_file("{$paths->scripts}{$page->template}/{$view->script}{$ext}")) {
+if ($view->script != "default" && !is_file($paths->scripts . $page->template . "/" . $view->script . $ext)) {
     $view->script = "default";
 }
-if ($view->script != "default" || is_file("{$paths->scripts}{$page->template}/{$view->script}{$ext}")) {
-    $view->filename = "{$paths->scripts}{$page->template}/{$view->script}{$ext}";
-    if ($view->script != "default" && !$view->allow_cache) {
-        // not using the default view script, disable page cache
-        $session->PageRenderNoCachePage = $page->id;
-    } else if ($session->PageRenderNoCachePage == $page->id) {
-        // make sure that page cache isn't skipped unnecessarily
-        $session->remove("PageRenderNoCachePage");
+if ($view->script != "default" || is_file($paths->scripts . $page->template . "/" . $view->script . $ext)) {
+    $view->filename = $paths->scripts . $page->template . "/" . $view->script . $ext;
+    if ($page->_pwmvc_context != "placeholder") {
+        if ($view->script != "default" && !$view->allow_cache) {
+            // not using the default view script, disable page cache
+            $session->PageRenderNoCachePage = $page->id;
+        } else if ($session->PageRenderNoCachePage == $page->id) {
+            // make sure that page cache isn't skipped unnecessarily
+            $session->remove("PageRenderNoCachePage");
+        }
     }
 }
 
@@ -168,7 +170,7 @@ if ($view->filename || $view->layout) {
     if ($filename = basename($view->layout)) {
         // layouts make it possible to define a common base structure for
         // multiple otherwise separate templates and view scripts (DRY)
-        $view->filename = "{$paths->layouts}{$filename}{$ext}";
+        $view->filename = $paths->layouts . $filename . $ext;
         if (!$view->placeholders->content) {
             $view->placeholders->content = $out;
         }
@@ -179,8 +181,8 @@ if ($view->filename || $view->layout) {
 // include a file containing custom front controller logic; the contents of
 // this file are executed right before content is displayed, which makes it
 // possible to make final adjustments to (or based on) the output itself
-if (is_file("{$config->paths->templates}{$front_controller}.after.php")) {
-    include "{$config->paths->templates}{$front_controller}.after.php";
+if (is_file($config->paths->templates . $front_controller . ".after.php")) {
+    include $config->paths->templates . $front_controller . ".after.php";
     if ($this->halt) return $this->halt();
 }
 

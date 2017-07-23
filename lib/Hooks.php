@@ -6,7 +6,7 @@
  * This file is intended for various hooks that make it easier to work with
  * template level stuff: shortcuts for getting and setting properties, etc.
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author Teppo Koivula <teppo.koivula@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License, version 2
  */
@@ -18,11 +18,11 @@
  *
  */
 wire()->addHook('Page::layout', function(HookEvent $event) {
-    if (isset($event->arguments[0])) {
-        $event->object->_layout = $event->arguments[0];
-        $event->return = $event->object;
+    if (empty($event->arguments)) {
+        $event->return = $event->object->_pwmvc_layout;
     } else {
-        $event->return = $event->object->_layout;
+        $event->object->_pwmvc_layout = $event->arguments[0];
+        $event->return = $event->object;
     }
 });
 
@@ -33,10 +33,10 @@ wire()->addHook('Page::layout', function(HookEvent $event) {
  *
  */
 wire()->addHook('Page::view', function(HookEvent $event) {
-    if (isset($event->arguments[0])) {
-        $event->object->_view = $event->arguments[0];
-        $event->return = $event->object;
+    if (empty($event->arguments)) {
+        $event->return = $event->object->_pwmvc_view;
     } else {
-        $event->return = $event->object->_view;
+        $event->object->_pwmvc_view = $event->arguments[0];
+        $event->return = $event->object;
     }
 });
