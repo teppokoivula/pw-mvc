@@ -1,3 +1,7 @@
+**pw-mvc is no longer actively maintained – if you're looking for a MVC type output framework for ProcessWire, check out [wireframe](https://wireframe-framework.com/) instead.**
+
+---
+
 # Simple implementation of the model-view-controller pattern for ProcessWire
 
 The goal of this project is to provide a light-weight model-view-controller implementation for ProcessWire. While it can be adapted to just about any kind of site or application, it is important to understand that this project is not a site profile in itself.
